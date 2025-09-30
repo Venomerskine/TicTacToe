@@ -4,37 +4,78 @@ const Gameboard = () =>{
     // Consts
     const rows = 3;
     const columns = 3;
-    const board = []
+    const board = Array.from({ length: rows }, () =>
+    Array.from({ length: columns }, () => cell())
+  );
 
 
 // Cell creations
-    for (let i = 0; i < rows; i++ ){
-        board[i] = [];
-        for (let j = 0; j < columns; j++){
-            board[i].push(cell())
+   
+     const getBoard = () => board.map(row => row.map(c => c.getValue()));
+
+    const markMarker = (row, col, player) => {
+        if(board[row][col].getValue() === null) {
+            board[row][col].addMarker(player)
         }
+        return false
     }
 
-    const getBoard = () => board
-
-    const markMarker = () => {
-        const availableCell = board.filter()
-        board.markMarker(player)
+    const printBoard = () => {
+        console.log(getBoard)
     }
 
 }
 
 // Cell 
 const cell = () => {
-    let value = 0;
+    let value = null;
     const addMarker = (player) => {
+        if(value !== null) return false
         value = player
+        return true
     }
 
     const getValue = () => value
 
+    const reset = () => {value = null}
+
     return {
         addMarker,
-        getValue
+        getValue,
+        reset
     }
+}
+
+// Controller
+
+const gameController = ( 
+    playerOneName = "Player One",
+    playerTwoName = "Player Two"
+) => {
+    const board = Gameboard()
+   
+    const players = [
+        {
+            name: playerOneName,
+            token: "X"
+        },
+        {
+            name: playerTwoName,
+            token: "O"
+        }
+    ]
+
+    let activePlayer = players[0];
+
+    const switchPlayerTurn = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0]
+    }
+
+    const getActivePlayer = () => activePlayer;
+
+    const playRound = (row, col) => {
+    const success = board.markMarker(row, col, getActivePlayer().token)
+    if (success) switchPlayerTurn()
+}
+
 }
